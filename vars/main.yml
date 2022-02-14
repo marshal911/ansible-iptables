@@ -1,0 +1,15 @@
+---
+# vars file for iptables
+iptables_dependency_packages:
+  - iptables
+  - netfilter-persistent
+
+# iptables services
+iptables_services:
+  - netfilter-persistent
+  
+# directory
+iptables_directory: /etc/iptables
+
+# iptables for IPv4
+iptables_v4_cfg: "{{ iptables_directory }}/rules.v4"

@@ -1,0 +1,7 @@
+---
+# defaults file for iptables
+# open ports incoming
+iptables_rules_in:
+  - protocol: tcp
+    dport: 22
+    comment: ALLOW SSH

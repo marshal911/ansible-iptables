@@ -1,0 +1,35 @@
+# {{ ansible_managed }}
+# Manual customization of this file is not recommended.
+
+*filter
+:INPUT DROP [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:SERVICE_IN - [0:0]
+
+
+################################################################################
+### INPUT
+################################################################################
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+-A INPUT -m conntrack --ctstate NEW -j SERVICE_IN
+
+
+################################################################################
+### FORWARD
+################################################################################
+-A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -i lo -j ACCEPT
+-A FORWARD -p icmp -j ACCEPT
+
+
+################################################################################
+### SERVICES
+################################################################################
+{% for item in iptables_rules_in %}
+-A SERVICE_IN -m comment --comment {% if item.comment is defined %}"{{ item.comment }}"{% endif %} -p {{ item.protocol }}{% if item.srcnet4 is defined %} --src {{ item.srcnet4 }}{% endif %} --sport {{ item.sport | default("1024:65535") }} --dport {{ item.dport }} -j ACCEPT
+{% endfor %}
+
+COMMIT
